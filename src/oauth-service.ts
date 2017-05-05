@@ -108,16 +108,21 @@ export class OAuthService {
 
     }
 
-    fetchTokenUsingPasswordFlow(userName: string, password: string) {
+    fetchTokenUsingPasswordFlow(userName: string, password: string, code?: string) {
 
         return new Promise((resolve, reject) => { 
             let search = new URLSearchParams();
-            search.set('grant_type', 'password');
+            search.set('grant_type', 'id_token+token');
+            search.set('grant_type', 'authorization_code');
             search.set('client_id', this.clientId);
             search.set('scope', this.scope);
             search.set('username', userName);
             search.set('password', password);
-            
+
+            if(code) {
+                search.set('code', code);
+            }
+
             if (this.dummyClientSecret) {
                 search.set('client_secret', this.dummyClientSecret);
             }
@@ -195,7 +200,7 @@ export class OAuthService {
             var response_type = "token";
 
             if (that.oidc) {
-                response_type = "id_token+token";
+                response_type = "code";
             }
 
             var url = that.loginUrl 
